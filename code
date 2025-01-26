@@ -26,8 +26,6 @@ void setup() {
   pinMode(BLUE_BUTTON, INPUT_PULLUP);
   pinMode(YELLOW_BUTTON, INPUT_PULLUP);
   
-  // Setup buzzer
- // pinMode(BUZZER, OUTPUT);
   
   // Initialize serial communication
   Serial.begin(9600);
@@ -96,7 +94,7 @@ void lightUp(int color) {
     case 2: digitalWrite(BLUE_LED, HIGH); break;
     case 3: digitalWrite(YELLOW_LED, HIGH); break;
   }
-  //tone(BUZZER, 500 + (color * 200), 200); // Play sound
+ 
 }
 
 void turnOff(int color) {
@@ -115,7 +113,6 @@ void gameOver() {
     digitalWrite(GREEN_LED, HIGH);
     digitalWrite(BLUE_LED, HIGH);
     digitalWrite(YELLOW_LED, HIGH);
-    //tone(BUZZER, 100, 500);
     delay(500);
     digitalWrite(RED_LED, LOW);
     digitalWrite(GREEN_LED, LOW);
@@ -132,7 +129,6 @@ void winGame() {
     digitalWrite(GREEN_LED, HIGH);
     digitalWrite(BLUE_LED, HIGH);
     digitalWrite(YELLOW_LED, HIGH);
-    //tone(BUZZER, 1000, 500);
     delay(500);
     digitalWrite(RED_LED, LOW);
     digitalWrite(GREEN_LED, LOW);
