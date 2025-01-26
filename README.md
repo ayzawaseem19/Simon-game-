@@ -1,1 +1,1 @@
-# Simon-game-
+Here is a small fun project simon game built using Arduino .This project involved combining hardware components like LEDs, buttons, and an Arduino board, alongside custom programming  It was a great exercise in circuit design, coding, and problem-solving. I am excited to continue exploring new ways to integrate electronics and software. 
