@@ -1,0 +1,148 @@
+#define RED_LED 13
+#define GREEN_LED 3
+#define BLUE_LED 10
+#define YELLOW_LED 5
+
+#define RED_BUTTON 12
+#define GREEN_BUTTON 2
+#define BLUE_BUTTON 9
+#define YELLOW_BUTTON 6
+
+
+const int maxSequenceLength = 10;
+int sequence[maxSequenceLength];
+int currentLevel = 1;
+
+void setup() {
+  // Setup LEDs
+  pinMode(RED_LED, OUTPUT);
+  pinMode(GREEN_LED, OUTPUT);
+  pinMode(BLUE_LED, OUTPUT);
+  pinMode(YELLOW_LED, OUTPUT);
+  
+  // Setup buttons
+  pinMode(RED_BUTTON, INPUT_PULLUP);
+  pinMode(GREEN_BUTTON, INPUT_PULLUP);
+  pinMode(BLUE_BUTTON, INPUT_PULLUP);
+  pinMode(YELLOW_BUTTON, INPUT_PULLUP);
+  
+  // Setup buzzer
+ // pinMode(BUZZER, OUTPUT);
+  
+  // Initialize serial communication
+  Serial.begin(9600);
+  randomSeed(analogRead(0)); // Seed for random number generation
+  
+  generateSequence(); // Generate the initial random sequence
+}
+
+void loop() {
+  playSequence();
+  if (!getUserInput()) {
+    gameOver();
+    delay(2000);
+    resetGame();
+  } else {
+    delay(1000); // Short pause before next level
+    currentLevel++;
+    if (currentLevel > maxSequenceLength) {
+      winGame();
+      resetGame();
+    }
+  }
+}
+
+void generateSequence() {
+  for (int i = 0; i < maxSequenceLength; i++) {
+    sequence[i] = random(0, 4); // Generate random number (0 to 3)
+  }
+}
+
+void playSequence() {
+  for (int i = 0; i < currentLevel; i++) {
+    lightUp(sequence[i]);
+    delay(500);
+    turnOff(sequence[i]);
+    delay(200);
+  }
+}
+
+bool getUserInput() {
+  for (int i = 0; i < currentLevel; i++) {
+    int button = waitForButtonPress();
+    if (button != sequence[i]) {
+      return false; // Wrong button pressed
+    }
+    lightUp(button);
+    delay(300);
+    turnOff(button);
+  }
+  return true; // Player input matches the sequence
+}
+
+int waitForButtonPress() {
+  while (true) {
+    if (digitalRead(RED_BUTTON) == LOW) return 0;
+    if (digitalRead(GREEN_BUTTON) == LOW) return 1;
+    if (digitalRead(BLUE_BUTTON) == LOW) return 2;
+    if (digitalRead(YELLOW_BUTTON) == LOW) return 3;
+  }
+}
+
+void lightUp(int color) {
+  switch (color) {
+    case 0: digitalWrite(RED_LED, HIGH); break;
+    case 1: digitalWrite(GREEN_LED, HIGH); break;
+    case 2: digitalWrite(BLUE_LED, HIGH); break;
+    case 3: digitalWrite(YELLOW_LED, HIGH); break;
+  }
+  //tone(BUZZER, 500 + (color * 200), 200); // Play sound
+}
+
+void turnOff(int color) {
+  switch (color) {
+    case 0: digitalWrite(RED_LED, LOW); break;
+    case 1: digitalWrite(GREEN_LED, LOW); break;
+    case 2: digitalWrite(BLUE_LED, LOW); break;
+    case 3: digitalWrite(YELLOW_LED, LOW); break;
+  }
+}
+
+void gameOver() {
+  Serial.println("Game Over!");
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(RED_LED, HIGH);
+    digitalWrite(GREEN_LED, HIGH);
+    digitalWrite(BLUE_LED, HIGH);
+    digitalWrite(YELLOW_LED, HIGH);
+    //tone(BUZZER, 100, 500);
+    delay(500);
+    digitalWrite(RED_LED, LOW);
+    digitalWrite(GREEN_LED, LOW);
+    digitalWrite(BLUE_LED, LOW);
+    digitalWrite(YELLOW_LED, LOW);
+    delay(500);
+  }
+}
+
+void winGame() {
+  Serial.println("You Win!");
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(RED_LED, HIGH);
+    digitalWrite(GREEN_LED, HIGH);
+    digitalWrite(BLUE_LED, HIGH);
+    digitalWrite(YELLOW_LED, HIGH);
+    //tone(BUZZER, 1000, 500);
+    delay(500);
+    digitalWrite(RED_LED, LOW);
+    digitalWrite(GREEN_LED, LOW);
+    digitalWrite(BLUE_LED, LOW);
+    digitalWrite(YELLOW_LED, LOW);
+    delay(500);
+  }
+}
+
+void resetGame() {
+  currentLevel = 1;
+  generateSequence();
+}
